@@ -20,8 +20,11 @@ require dirname(__FILE__) . "/bootstrap.php";
 
 /* You need to create a category beforehand and then get its ID by looking in the oxcategories table */
 /* The category ID has to be set here */
-$category = "15eb8d678953e37addc7451995279e57";
-
+$category = "CATEGORY ID GOES HERE ";
+$host = "HOST GOES HERE";
+$user = "DATABASE USER GOES HERE";
+$password = "PASSWORD GOES HERE";
+$table = "DATABASE TABLE GOES HERE";
 /* import start  */
 
 /* getting the products  */
@@ -36,13 +39,15 @@ $customerRequestURL = 'http://student.mi.hs-offenburg.de:8080/sqlrest/CUSTOMER';
 $customerResponse = file_get_contents($customerRequestURL);
 $customerXMLData = simplexml_load_string($customerResponse);
 
-$connection = new mysqli ("localhost", "eb_apps_9", "PASSWORD", "eb_apps_9");
+$connection = new mysqli ($host, $user, $password, $table);
 $continue = true;
 
 if(mysqli_connect_errno()) {
     echo "Failed to connect to the MySQL server. Error: " . mysqli_connect_error() . PHP_EOL;
     exit();
 }
+/* Set autocommit to false */
+$connection->autocommit(FALSE);
 
 foreach ($productXMLData->PRODUCT as $entry) {
     $productTempUrl = $productRequestURL."/".$entry;
@@ -59,18 +64,18 @@ foreach ($productXMLData->PRODUCT as $entry) {
     /* problem here: Generate an unique OXID for every article  */
     $statement = $connection->prepare("INSERT INTO oxarticles (OXID, OXARTNUM, OXTITLE, OXPRICE, OXSUBCLASS, OXSHOPID, OXSTOCK, OXTITLE_1) VALUES (?, ?, ?, ?, 'oxarticle', 'oxbaseshop', 1, ?)");
     if(!$statement) {
-        echo "Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        echo "Articles: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
         exit();
     }
 
     /* bind statement */
     if(!$statement->bind_param("sisds", $RANDOMID, $ID, $NAME, $PRICE, $ID)) {
-        echo "Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        echo "Articles: Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }
 
     if(!$statement->execute()) {
-        echo "Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        echo "Articles: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }
 
@@ -78,18 +83,18 @@ foreach ($productXMLData->PRODUCT as $entry) {
     /* Put the articles in the correct category */
     $statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP) VALUES (?,?,?,?)");
     if(!$statement) {
-        echo "Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        echo "Categories: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
         exit();
     }
 
     /* bind statement */
     $anotherRandomID = uniqid();
     if(!$statement->bind_param("ssss", $anotherRandomID, $ID, $category, $date)) {
-        echo "Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        echo "Categories:  Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }
     if(!$statement->execute()) {
-        echo "Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        echo "Categories: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }
 }
@@ -111,21 +116,25 @@ foreach ($customerXMLData->CUSTOMER as $entry) {
         . "OXSHOPID, OXRIGHTS, OXACTIVE, OXCUSTNR, OXFNAME, OXLNAME, OXSTREET,"
         . "OXCITY) VALUES (?, ?,"
         . "'oxbaseshop', 'user', 1, ?, ?, ?, ?, ?)")) {
-        echo "Line 73: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        echo "Users: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
         exit();
     }
 
         if(!$statement->bind_param("sisssss", $RANDOMID, $ID, $i, $FIRSTNAME, $LASTNAME, $STREET, $CITY)) {
-        echo "Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        echo "Users: Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }
         if(!$statement->execute()) {
-        echo "Line 82: Execute failed: (" . $statement->errno . ") " . $statement->error;
+        echo "Users: Execute failed: (" . $statement->errno . ") " . $statement->error;
         exit();
     }
 }
 
-echo 'Import erfolgreich.' . PHP_EOL;
+if(!$connection->commit()) {
+    echo "Transaction failed.";
+    exit();
+}
+echo 'Import successfully completed!' . PHP_EOL;
 
 mysqli_close($connection);
 

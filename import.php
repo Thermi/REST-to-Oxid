@@ -65,17 +65,20 @@ foreach ($productXMLData->PRODUCT as $entry) {
     $statement = $connection->prepare("INSERT INTO oxarticles (OXID, OXARTNUM, OXTITLE, OXPRICE, OXSUBCLASS, OXSHOPID, OXSTOCK, OXTITLE_1) VALUES (?, ?, ?, ?, 'oxarticle', 'oxbaseshop', 1, ?)");
     if(!$statement) {
         echo "Articles: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 
     /* bind statement */
     if(!$statement->bind_param("sisds", $RANDOMID, $ID, $NAME, $PRICE, $ID)) {
         echo "Articles: Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 
     if(!$statement->execute()) {
         echo "Articles: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 
@@ -84,17 +87,20 @@ foreach ($productXMLData->PRODUCT as $entry) {
     $statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP) VALUES (?,?,?,?)");
     if(!$statement) {
         echo "Categories: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 
     /* bind statement */
     $anotherRandomID = uniqid();
-    if(!$statement->bind_param("ssss", $anotherRandomID, $ID, $category, $date)) {
+    if(!$statement->bind_param("ssss", $anotherRandomID, $RANDOMID, $category, $date)) {
         echo "Categories:  Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
     if(!$statement->execute()) {
         echo "Categories: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 }
@@ -117,15 +123,18 @@ foreach ($customerXMLData->CUSTOMER as $entry) {
         . "OXCITY) VALUES (?, ?,"
         . "'oxbaseshop', 'user', 1, ?, ?, ?, ?, ?)")) {
         echo "Users: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
 
         if(!$statement->bind_param("sisssss", $RANDOMID, $ID, $i, $FIRSTNAME, $LASTNAME, $STREET, $CITY)) {
         echo "Users: Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+        mysqli_close($connection);
         exit();
     }
         if(!$statement->execute()) {
         echo "Users: Execute failed: (" . $statement->errno . ") " . $statement->error;
+        mysqli_close($connection);
         exit();
     }
 }

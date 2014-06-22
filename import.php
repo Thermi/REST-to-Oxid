@@ -54,6 +54,7 @@ foreach ($productXMLData->PRODUCT as $entry) {
     $NAME = $productXMLData->NAME;
     $PRICE = $productXMLData->PRICE;
     $i = null;
+    $date = date("%Y-%M-%d %H:%M:%S");
     /* prepare statement */
     /* problem here: Generate an unique OXID for every article  */
     $statement = $connection->prepare("INSERT INTO oxarticles (OXID, OXARTNUM, OXTITLE, OXPRICE, OXSUBCLASS, OXSHOPID, OXSTOCK, OXTITLE_1) VALUES (?, ?, ?, ?, 'oxarticle', 'oxbaseshop', 1, ?)");
@@ -83,7 +84,7 @@ foreach ($productXMLData->PRODUCT as $entry) {
 
     /* bind statement */
     $anotherRandomID = uniqid();
-    if(!$statement->bind_param("ssss", $anotherRandomID, $ID, $category, date("%Y-%M-%d %H:%M:%S"))) {
+    if(!$statement->bind_param("ssss", $anotherRandomID, $ID, $category, $date)) {
         echo "Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
         exit();
     }

@@ -76,7 +76,7 @@ foreach ($productXMLData->PRODUCT as $entry) {
 
 
     /* Put the articles in the correct category */
-    $statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP VALUES (?,?,?,?)");
+    $statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP) VALUES (?,?,?,?)");
     if(!$statement) {
         echo "Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
         exit();

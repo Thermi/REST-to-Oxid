@@ -27,7 +27,7 @@ require dirname(__FILE__) . "/bootstrap.php";
 $host = "HOST GOES HERE";
 $user = "DATABASE USER GOES HERE";
 $password = "PASSWORD GOES HERE";
-$table = "DATABASE TABLE GOES HERE";
+$database = "DATABASE GOES HERE";
 /* import start  */
 
 /* getting the products  */
@@ -42,7 +42,7 @@ $customerRequestURL = 'http://student.mi.hs-offenburg.de:8080/sqlrest/CUSTOMER';
 $customerResponse = file_get_contents($customerRequestURL);
 $customerXMLData = simplexml_load_string($customerResponse);
 
-$connection = new mysqli ($host, $user, $password, $table);
+$connection = new mysqli ($host, $user, $password, $database);
 $continue = true;
 
 if(mysqli_connect_errno()) {

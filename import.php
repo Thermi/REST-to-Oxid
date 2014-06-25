@@ -18,9 +18,12 @@
 require dirname(__FILE__) . "/bootstrap.php";
 
 
+/* The category stuff isn't working right now. Just ignore it.
+ * The corresponding code is commented out right now.*/
+
 /* You need to create a category beforehand and then get its ID by looking in the oxcategories table */
 /* The category ID has to be set here */
-$category = "CATEGORY ID GOES HERE ";
+// $category = "CATEGORY ID GOES HERE ";
 $host = "HOST GOES HERE";
 $user = "DATABASE USER GOES HERE";
 $password = "PASSWORD GOES HERE";
@@ -84,25 +87,25 @@ foreach ($productXMLData->PRODUCT as $entry) {
 
 
     /* Put the articles in the correct category */
-    $statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP) VALUES (?,?,?,?)");
-    if(!$statement) {
-        echo "Categories: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
-        mysqli_close($connection);
-        exit();
-    }
+    //$statement = $connection->prepare("INSERT INTO oxobject2category (OXID, OXOBJECTID, OXCATNID, OXTIMESTAMP) VALUES (?,?,?,?)");
+    //if(!$statement) {
+    //    echo "Categories: Prepare failed: (" . $connection->errno . ")" . $connection->error . PHP_EOL;
+    //   mysqli_close($connection);
+    //    exit();
+    //}
 
     /* bind statement */
-    $anotherRandomID = uniqid();
-    if(!$statement->bind_param("ssss", $anotherRandomID, $RANDOMID, $category, $date)) {
-        echo "Categories:  Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
-        mysqli_close($connection);
-        exit();
-    }
-    if(!$statement->execute()) {
-        echo "Categories: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
-        mysqli_close($connection);
-        exit();
-    }
+    //$anotherRandomID = uniqid();
+    //if(!$statement->bind_param("ssss", $anotherRandomID, $RANDOMID, $category, $date)) {
+    //    echo "Categories:  Binding parameters failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+    //    mysqli_close($connection);
+    //   exit();
+    //}
+    //if(!$statement->execute()) {
+    //    echo "Categories: Execute failed: (" . $statement->errno . ") " . $statement->error . PHP_EOL;
+    //    mysqli_close($connection);
+    //    exit();
+    //}
 }
 
 foreach ($customerXMLData->CUSTOMER as $entry) {
